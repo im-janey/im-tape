@@ -90,7 +90,7 @@ class _SignUpState extends State<SignUp> {
                 labelStyle: TextStyle(color: Colors.grey),
                 floatingLabelStyle: TextStyle(color: Color(0xff4863E0)),
               ),
-              obscureText: true,
+              obscureText: false, // 변경: 텍스트 표시
               cursorColor: Color(0xff4863E0),
             ),
             const SizedBox(height: 13.0),
@@ -105,7 +105,7 @@ class _SignUpState extends State<SignUp> {
                 labelStyle: TextStyle(color: Colors.grey),
                 floatingLabelStyle: TextStyle(color: Color(0xff4863E0)),
               ),
-              obscureText: true,
+              obscureText: false, // 변경: 텍스트 표시
               cursorColor: Color(0xff4863E0),
               keyboardType: TextInputType.emailAddress,
             ),

@@ -113,7 +113,7 @@ class _MapPageState extends State<MapPage> {
                   context,
                   MaterialPageRoute(
                     builder: (context) => DetailPage(
-                      collectionName: 'restaurant',
+                      collectionName: 'park',
                       name: data['name'],
                       subname: '',
                       data: data,
@@ -228,7 +228,7 @@ class _MapPageState extends State<MapPage> {
                           context,
                           MaterialPageRoute(
                             builder: (context) => DetailPage(
-                                collectionName: 'restaurant',
+                                collectionName: 'park',
                                 name: data['name'] ?? 'No Name',
                                 data: data,
                                 address: data['address'] ?? 'No Address',
