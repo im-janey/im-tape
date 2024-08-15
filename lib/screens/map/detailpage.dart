@@ -243,10 +243,10 @@ class _DetailPageState extends State<DetailPage>
                     collectionName: widget.collectionName, // 컬렉션 이름 전달
                     id: widget.id,
                     ratingFields: LinkedHashMap<String, String>.from({
-                      '총별점': '총점',
+                      '총별점': '    총점',
                       '출입': '휠체어 출입',
                       '좌석': '휠체어 좌석',
-                      '친절': '친절도',
+                      '친절': '   친절도',
                     }),
                   ),
                   InfoPage(

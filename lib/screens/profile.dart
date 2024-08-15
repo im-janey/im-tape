@@ -5,7 +5,6 @@ import 'package:flutter_application_1/screens/menu.dart';
 
 class Profile extends StatefulWidget {
   const Profile({super.key});
-
   @override
   State<Profile> createState() => _ProfileState();
 }
@@ -16,7 +15,6 @@ class _ProfileState extends State<Profile> {
   final TextEditingController _nicknameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   String _profileImageUrl = '';
-
   @override
   void initState() {
     super.initState();
@@ -81,9 +79,7 @@ class _ProfileState extends State<Profile> {
         child: Column(
           children: [
             const SizedBox(height: 30),
-            Positioned(
-              top: 99.24,
-              left: 126,
+            Center(
               child: _profileImageUrl.isNotEmpty
                   ? CircleAvatar(
                       radius: 80,
@@ -147,7 +143,6 @@ class _ProfileState extends State<Profile> {
 
 class ChangePasswordPage extends StatefulWidget {
   const ChangePasswordPage({super.key});
-
   @override
   _ChangePasswordPageState createState() => _ChangePasswordPageState();
 }
@@ -159,7 +154,6 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
   final TextEditingController _confirmPasswordController =
       TextEditingController();
   final FirebaseAuth _auth = FirebaseAuth.instance;
-
   // 비밀번호 변경 로직
   Future<void> _changePassword() async {
     if (_newPasswordController.text != _confirmPasswordController.text) {
@@ -168,7 +162,6 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
       );
       return;
     }
-
     try {
       User? user = _auth.currentUser;
       if (user != null) {

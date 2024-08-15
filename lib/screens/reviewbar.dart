@@ -114,15 +114,38 @@ class _RatingState extends State<Rating> {
     return Scaffold(
       appBar: AppBar(title: Text('리뷰 작성')),
       body: Padding(
-        padding: const EdgeInsets.all(25.0),
+        padding: const EdgeInsets.all(30),
         child: Column(
           children: [
-            _buildProfileImage(),
+            Row(
+              children: [
+                _buildProfileImage(),
+                SizedBox(width: 15),
+                Text(_nickname,
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold))
+              ],
+            ),
+            SizedBox(height: 25),
             ..._buildRatingFields(),
             _buildReviewTextField(),
             ElevatedButton(
               onPressed: _submitReview,
-              child: Image.asset('assets/finish1.png'),
+              style: ElevatedButton.styleFrom(
+                padding: EdgeInsets.zero,
+              ),
+              child: Ink(
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage('assets/finish1.png'),
+                    fit: BoxFit.cover,
+                  ),
+                  borderRadius: BorderRadius.circular(100),
+                ),
+                child: SizedBox(
+                  width: 330,
+                  height: 50,
+                ),
+              ),
             ),
           ],
         ),
@@ -133,7 +156,7 @@ class _RatingState extends State<Rating> {
   // 프로필 이미지 위젯
   Widget _buildProfileImage() {
     return CircleAvatar(
-      radius: 40,
+      radius: 30,
       backgroundImage:
           _profileImageUrl.isNotEmpty ? NetworkImage(_profileImageUrl) : null,
       child: _profileImageUrl.isEmpty ? Icon(Icons.person) : null,
@@ -143,47 +166,65 @@ class _RatingState extends State<Rating> {
   // 평점 필드 위젯 리스트
   List<Widget> _buildRatingFields() {
     return widget.ratingFields.entries.map((entry) {
-      return Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(entry.value, style: TextStyle(fontSize: 17)),
-              Row(
-                children: List.generate(5, (index) {
-                  return IconButton(
-                    icon: Icon(
-                      index < _ratings[entry.key]!
-                          ? Icons.star
-                          : Icons.star_border,
-                      color: Color(0xff4863E0),
-                    ),
-                    iconSize: 30,
-                    onPressed: () =>
-                        setState(() => _ratings[entry.key] = index + 1),
-                  );
-                }),
-              ),
-            ],
-          ),
-          SizedBox(height: 16),
-        ],
+      return Padding(
+        padding: EdgeInsets.only(
+            left: 4, right: 4), // Moved the closing parenthesis here
+        child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(entry.value, style: TextStyle(fontSize: 17)),
+                Row(
+                  children: List.generate(
+                    5,
+                    (index) {
+                      return IconButton(
+                        icon: Icon(
+                          index < _ratings[entry.key]!
+                              ? Icons.star
+                              : Icons.star_border,
+                          color: Color(0xff4863E0),
+                        ),
+                        iconSize: 28,
+                        onPressed: () =>
+                            setState(() => _ratings[entry.key] = index + 1),
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       );
     }).toList();
   }
 
   // 리뷰 텍스트 필드 위젯
   Widget _buildReviewTextField() {
-    return SizedBox(
-      height: 150,
-      child: TextField(
-        controller: _textController,
-        decoration: InputDecoration(
-          hintText: '이곳에 다녀온 경험을 자세히 공유해주세요',
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
+    return Column(
+      children: [
+        SizedBox(height: 40),
+        TextField(
+          controller: _textController,
+          decoration: InputDecoration(
+            hintText: '이곳에 다녀온 경험을 자세히 공유해주세요',
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(15),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(15),
+              borderSide: BorderSide(color: Color(0xff4863E0), width: 1.5),
+            ),
+            labelStyle: TextStyle(color: Colors.grey),
+          ),
+          maxLines: null,
+          minLines: 5,
+          cursorColor: Color(0xff4863E0),
         ),
-        maxLines: null,
-      ),
+        SizedBox(height: 40),
+      ],
     );
   }
 }
