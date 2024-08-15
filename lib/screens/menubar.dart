@@ -45,40 +45,53 @@ class menubar extends StatelessWidget {
 
               return ListView(
                 children: [
-                  ...menuSnapshot.data!.docs.map((menuDoc) {
-                    var data = menuDoc.data() as Map<String, dynamic>;
+                  ...menuSnapshot.data!.docs.map(
+                    (menuDoc) {
+                      var data = menuDoc.data() as Map<String, dynamic>;
 
-                    // 데이터를 안전하게 변환합니다.
-                    List<String> names = List<String>.from(data['name'] ?? []);
-                    List<String> prices =
-                        List<String>.from(data['price'] ?? []);
-                    List<String> images =
-                        List<String>.from(data['images'] ?? []);
+                      // 데이터를 안전하게 변환합니다.
+                      List<String> names =
+                          List<String>.from(data['name'] ?? []);
+                      List<String> prices =
+                          List<String>.from(data['price'] ?? []);
+                      List<String> images =
+                          List<String>.from(data['images'] ?? []);
 
-                    return Column(
-                      children: List.generate(
-                        names.length,
-                        (i) => ListTile(
-                          leading: images.isNotEmpty && images[i].isNotEmpty
-                              ? Image.network(
-                                  images[i],
-                                  width: 60,
-                                  height: 60,
-                                  fit: BoxFit.cover,
-                                  errorBuilder: (context, error, stackTrace) {
-                                    return Icon(Icons.error);
-                                  },
-                                )
-                              : Icon(Icons.fastfood),
-                          title: Text(names[i]),
-                          subtitle: Text(
-                            'Price: ${prices[i]}',
-                            style: TextStyle(fontWeight: FontWeight.bold),
+                      return Column(
+                        children: [
+                          SizedBox(height: 10),
+                          ...List.generate(
+                            names.length,
+                            (i) => Padding(
+                              padding: EdgeInsets.only(
+                                left: 5,
+                                right: 5,
+                              ),
+                              child: ListTile(
+                                leading:
+                                    images.isNotEmpty && images[i].isNotEmpty
+                                        ? Image.network(
+                                            images[i],
+                                            width: 60,
+                                            height: 60,
+                                            fit: BoxFit.cover,
+                                            errorBuilder:
+                                                (context, error, stackTrace) {
+                                              return Icon(Icons.error);
+                                            },
+                                          )
+                                        : Icon(Icons.fastfood),
+                                title: Text(names[i]),
+                                subtitle: Text(
+                                  prices[i],
+                                ),
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
-                    );
-                  }),
+                        ],
+                      );
+                    },
+                  ),
                 ],
               );
             },
