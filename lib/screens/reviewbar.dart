@@ -121,15 +121,17 @@ class _RatingState extends State<Rating> {
               children: [
                 _buildProfileImage(),
                 SizedBox(width: 15),
-                Text(_nickname,
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold))
+                Text(_nickname, style: TextStyle(fontSize: 18))
               ],
             ),
             SizedBox(height: 25),
             ..._buildRatingFields(),
             _buildReviewTextField(),
             ElevatedButton(
-              onPressed: _submitReview,
+              onPressed: () {
+                Navigator.pop(context);
+                _submitReview();
+              },
               style: ElevatedButton.styleFrom(
                 padding: EdgeInsets.zero,
               ),
@@ -167,8 +169,7 @@ class _RatingState extends State<Rating> {
   List<Widget> _buildRatingFields() {
     return widget.ratingFields.entries.map((entry) {
       return Padding(
-        padding: EdgeInsets.only(
-            left: 4, right: 4), // Moved the closing parenthesis here
+        padding: EdgeInsets.only(left: 4, right: 4),
         child: Column(
           children: [
             Row(
@@ -236,10 +237,13 @@ class ReviewList extends StatelessWidget {
 
   const ReviewList({super.key, required this.collectionName, required this.id});
 
-  Future<String> _getUserName(String userId) async {
+  Future<Map<String, String>> _getUserInfo(String userId) async {
     var userDoc =
         await FirebaseFirestore.instance.collection('users').doc(userId).get();
-    return userDoc.exists ? userDoc['nickname'] ?? '익명' : '익명';
+    return {
+      'name': userDoc.exists ? userDoc['nickname'] ?? '익명' : '익명',
+      'imageUrl': userDoc.exists ? userDoc['image'] ?? '' : '',
+    };
   }
 
   @override
@@ -270,24 +274,42 @@ class ReviewList extends StatelessWidget {
     var reviewData = doc.data() as Map<String, dynamic>?;
     if (reviewData == null) return ListTile(title: Text('리뷰 데이터를 불러올 수 없습니다.'));
 
-    return FutureBuilder<String>(
-      future: _getUserName(reviewData['userId']),
+    return FutureBuilder<Map<String, String>>(
+      future: _getUserInfo(reviewData['userId']),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return ListTile(title: Text('로딩 중...'));
         }
         if (snapshot.hasError) return ListTile(title: Text('오류 발생'));
 
-        String userName = snapshot.data ?? '익명';
+        String userName = snapshot.data?['name'] ?? '익명';
+        String userImageUrl = snapshot.data?['imageUrl'] ?? '';
+
         return Padding(
           padding: EdgeInsets.all(10),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(userName,
-                  style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold)),
-              _buildRatingStars(reviewData),
-              _buildRatingDetails(reviewData),
+              Row(
+                children: [
+                  CircleAvatar(
+                    radius: 19,
+                    backgroundImage: userImageUrl.isNotEmpty
+                        ? NetworkImage(userImageUrl)
+                        : null,
+                    child: userImageUrl.isEmpty ? Icon(Icons.person) : null,
+                  ),
+                  SizedBox(width: 10),
+                  Text(userName, style: TextStyle(fontSize: 16)),
+                ],
+              ),
+              SizedBox(height: 4),
+              Row(
+                children: [
+                  _buildRatingStars(reviewData),
+                  _buildRatingDetails(reviewData),
+                ],
+              ),
               Padding(
                 padding: const EdgeInsets.only(top: 8.0),
                 child: Text(reviewData['review'] ?? '리뷰 내용 없음'),
@@ -313,14 +335,22 @@ class ReviewList extends StatelessWidget {
 
   Widget _buildRatingDetails(Map<String, dynamic> reviewData) {
     return Wrap(
-      spacing: 8,
-      children: reviewData.entries.where((e) {
-        return !['userId', 'review', 'timestamp', '총별점'].contains(e.key);
-      }).map((e) {
-        return Chip(
-          label: Text('${e.key}: ${e.value}'),
-        );
-      }).toList(),
+      children: reviewData.entries
+          .where(
+              (e) => !['userId', 'review', 'timestamp', '총별점'].contains(e.key))
+          .map((e) => Container(
+                constraints: BoxConstraints(maxWidth: 70),
+                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.white),
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child: Text(
+                  '${e.key}: ${e.value}',
+                  style: TextStyle(fontSize: 14),
+                ),
+              ))
+          .toList(),
     );
   }
 }

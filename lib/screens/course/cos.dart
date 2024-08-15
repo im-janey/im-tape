@@ -81,7 +81,7 @@ class _FavoritesListState extends State<FavoritesList> {
                         List<DocumentSnapshot> favoriteDocs =
                             docSnapshot.data ?? [];
                         if (favoriteDocs.isEmpty) {
-                          return Center(child: Text('코스만들기가 없습니다.'));
+                          return Center(child: Text('코스 만들기가 없습니다.'));
                         }
                         return Column(
                           children: [

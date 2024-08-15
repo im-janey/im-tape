@@ -208,7 +208,7 @@ class _FolderState extends State<Folder> {
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
-                    backgroundColor: Colors.black54,
+                    backgroundColor: Colors.transparent,
                   ),
                 ),
               ),
@@ -233,7 +233,6 @@ class _FolderState extends State<Folder> {
       appBar: AppBar(
         title: Text(
           '내가 만든 코스',
-          style: TextStyle(fontWeight: FontWeight.bold),
         ),
       ),
       body: Padding(
@@ -255,7 +254,7 @@ class _FolderState extends State<Folder> {
                     width: 160,
                     height: 200,
                     alignment: Alignment.center,
-                    child: Icon(Icons.add, size: 50),
+                    child: Icon(Icons.add, size: 50, color: Colors.black),
                   ),
                 ),
               );

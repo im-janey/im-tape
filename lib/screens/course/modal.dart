@@ -24,7 +24,18 @@ class Modal extends StatelessWidget {
                     content: TextField(
                       decoration: InputDecoration(
                         hintText: '코스 이름을 입력하세요',
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30),
+                          borderSide:
+                              BorderSide(color: Color(0xff4863E0), width: 2),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30),
+                          borderSide:
+                              BorderSide(color: Color(0xff4863E0), width: 2),
+                        ),
                       ),
+                      cursorColor: Color(0xff4863E0),
                     ),
                     actions: [
                       TextButton(
@@ -37,7 +48,10 @@ class Modal extends StatelessWidget {
                         onPressed: () {
                           // 실행 버튼 클릭 시 동작
                         },
-                        child: Text('설정'),
+                        child: Text(
+                          '설정',
+                          style: TextStyle(color: Colors.white),
+                        ),
                       ),
                     ],
                   );
