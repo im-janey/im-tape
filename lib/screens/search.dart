@@ -13,27 +13,22 @@ class Search extends StatefulWidget {
 class _SearchState extends State<Search> {
   final TextEditingController _searchController = TextEditingController();
   List<Map<String, dynamic>> searchResults = [];
-  List<String> collections = [
+  final List<String> collections = [
     'cafe',
     'restaurant',
     'park',
     'display',
     'play'
-  ]; // 검색할 컬렉션 목록
+  ];
 
   void _performSearch() async {
     String query = _searchController.text;
-
     if (query.isEmpty) {
-      setState(() {
-        searchResults.clear();
-      });
+      setState(() => searchResults.clear());
       return;
     }
 
-    List<Map<String, dynamic>> allResults = [];
-
-    // 모든 컬렉션에 대해 검색 실행
+    List<Map<String, dynamic>> results = [];
     for (String collection in collections) {
       QuerySnapshot snapshot = await FirebaseFirestore.instance
           .collection(collection)
@@ -41,19 +36,14 @@ class _SearchState extends State<Search> {
           .where('name', isLessThanOrEqualTo: '$query\uf8ff')
           .get();
 
-      // 검색 결과와 컬렉션 이름을 함께 저장
-      for (var doc in snapshot.docs) {
-        allResults.add({
-          'data': doc.data(),
-          'collectionName': collection, // 컬렉션 이름 추가
-          'id': doc.id, // 문서 ID 추가
-        });
-      }
+      results.addAll(snapshot.docs.map((doc) => {
+            'data': doc.data() as Map<String, dynamic>,
+            'collectionName': collection,
+            'id': doc.id,
+          }));
     }
 
-    setState(() {
-      searchResults = allResults; // 모든 검색 결과를 하나의 리스트로 합침
-    });
+    setState(() => searchResults = results);
   }
 
   @override
@@ -61,98 +51,94 @@ class _SearchState extends State<Search> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: Row(
-          children: [
-            Expanded(
-              child: TextField(
-                controller: _searchController, // 검색어 입력을 위한 컨트롤러
-                decoration: InputDecoration(
-                  hintText: '검색어를 입력하세요',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30),
+        toolbarHeight: 110,
+        title: Padding(
+          padding: EdgeInsets.only(left: 10),
+          child: Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  controller: _searchController,
+                  decoration: InputDecoration(
+                    hintText: '검색어를 입력하세요',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    suffixIcon: IconButton(
+                      icon: Icon(Icons.search, size: 28),
+                      onPressed: _performSearch,
+                    ),
                   ),
-                  suffixIcon: IconButton(
-                    icon: Icon(Icons.search),
-                    onPressed: _performSearch, // 검색 버튼 클릭 시 검색 실행
-                  ),
+                  cursorColor: Color(0xff4863E0),
                 ),
               ),
-            ),
-            IconButton(
-              icon: Text('취소'), // 취소 버튼
+            ],
+          ),
+        ),
+        actions: [
+          Padding(
+            padding: EdgeInsets.only(top: 5, right: 20),
+            child: TextButton(
               onPressed: () {
-                Navigator.pop(
+                Navigator.push(
                   context,
-                  MaterialPageRoute(
-                      builder: (context) => Home()), // 홈 화면으로 돌아가기
+                  MaterialPageRoute(builder: (context) => Home()),
                 );
               },
+              child: const Text(
+                '취소',
+                style: TextStyle(fontSize: 17, color: Colors.black),
+              ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(15.0),
-        child: Column(
-          children: [
-            SizedBox(height: 20),
-            Expanded(
+      body: Column(
+        children: [
+          Expanded(
               child: searchResults.isEmpty
                   ? Center(child: Text('검색 결과가 없습니다.'))
-                  : ListView.builder(
-                      itemCount: searchResults.length,
-                      itemBuilder: (context, index) {
-                        var data = searchResults[index]['data']
-                            as Map<String, dynamic>;
-                        String collectionName =
-                            searchResults[index]['collectionName'];
-                        String docId = searchResults[index]['id'];
+                  : Padding(
+                      padding: EdgeInsets.only(left: 20),
+                      child: ListView.builder(
+                        itemCount: searchResults.length,
+                        itemBuilder: (context, index) {
+                          var item = searchResults[index];
+                          var data = item['data'] as Map<String, dynamic>;
+                          String? bannerImageUrl =
+                              data['banner'] is List ? data['banner'][0] : null;
 
-                        // banner 배열에서 첫 번째 이미지를 가져옵니다.
-                        String? bannerImageUrl;
-                        if (data['banner'] != null &&
-                            data['banner'] is List &&
-                            (data['banner'] as List).isNotEmpty) {
-                          bannerImageUrl = (data['banner'] as List)[0];
-                        }
-
-                        return ListTile(
-                          leading: bannerImageUrl != null
-                              ? Image.network(
-                                  bannerImageUrl,
-                                  width: 50,
-                                  height: 50,
-                                  fit: BoxFit.cover,
-                                  errorBuilder: (context, error, stackTrace) {
-                                    return Icon(Icons.error);
-                                  },
-                                )
-                              : Icon(Icons
-                                  .image_not_supported), // 이미지가 없을 때 아이콘 표시
-                          title: Text(data['name'] ?? 'No Name'), // 이름 표시
-                          subtitle:
-                              Text(data['address'] ?? 'No Address'), // 주소 표시
-                          onTap: () {
-                            Navigator.push(
+                          return ListTile(
+                            leading: bannerImageUrl != null
+                                ? Image.network(bannerImageUrl,
+                                    width: 50, height: 50, fit: BoxFit.cover)
+                                : Icon(Icons.image_not_supported),
+                            title: Text(data['name'] ?? 'No Name'),
+                            subtitle: Text(data['address'] ?? 'No Address'),
+                            onTap: () => Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => DetailPage(
-                                  collectionName: collectionName, // 컬렉션 이름 전달
+                                builder: (_) => DetailPage(
+                                  collectionName: item['collectionName'],
                                   name: data['name'] ?? 'No Name',
                                   address: data['address'] ?? 'No Address',
                                   subname: data['subname'] ?? '',
                                   data: data,
-                                  id: docId, // 문서 ID 전달
+                                  id: item['id'],
                                 ),
                               ),
-                            );
-                          },
-                        );
-                      },
-                    ),
-            ),
-          ],
-        ),
+                            ),
+                          );
+                        },
+                      ),
+                    )),
+        ],
       ),
     );
   }

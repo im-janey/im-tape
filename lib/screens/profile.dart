@@ -120,25 +120,28 @@ class _ProfileState extends State<Profile> {
 
   // 텍스트 필드 위젯 생성
   Widget _buildTextField(String label, TextEditingController controller) {
-    return ListTile(
-      leading: Text(label,
-          style: const TextStyle(fontSize: 17, color: Colors.black)),
-      title: TextField(
-        controller: controller,
-        style: const TextStyle(color: Colors.black),
-        decoration: InputDecoration(
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
-          hintText: '$label을 입력하세요',
-          hintStyle: const TextStyle(color: Color(0xFFA7A7A7), fontSize: 16),
-          focusedBorder: const UnderlineInputBorder(
-            borderSide: BorderSide(color: Color(0xff4863E0), width: 1.5),
+    return Padding(
+        padding: EdgeInsets.only(left: 10, right: 10),
+        child: ListTile(
+          leading: Text(label,
+              style: const TextStyle(fontSize: 17, color: Colors.black)),
+          title: TextField(
+            controller: controller,
+            style: const TextStyle(color: Colors.black),
+            decoration: InputDecoration(
+              contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
+              hintText: '$label을 입력하세요',
+              hintStyle:
+                  const TextStyle(color: Color(0xFFA7A7A7), fontSize: 16),
+              focusedBorder: const UnderlineInputBorder(
+                borderSide: BorderSide(color: Color(0xff4863E0), width: 1.5),
+              ),
+              enabledBorder: const UnderlineInputBorder(
+                borderSide: BorderSide(color: Colors.grey),
+              ),
+            ),
           ),
-          enabledBorder: const UnderlineInputBorder(
-            borderSide: BorderSide(color: Colors.grey),
-          ),
-        ),
-      ),
-    );
+        ));
   }
 }
 
@@ -232,20 +235,23 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
 
   // 비밀번호 입력 필드 위젯 생성
   Widget _buildPasswordField(String label, TextEditingController controller) {
-    return TextField(
-      controller: controller,
-      obscureText: true,
-      decoration: InputDecoration(
-        labelText: label,
-        border: const OutlineInputBorder(),
-        hintStyle: const TextStyle(color: Color(0xFFA7A7A7), fontSize: 16),
-        focusedBorder: const UnderlineInputBorder(
-          borderSide: BorderSide(color: Color(0xff4863E0), width: 1.5),
-        ),
-        enabledBorder: const UnderlineInputBorder(
-          borderSide: BorderSide(color: Colors.grey),
-        ),
-      ),
-    );
+    return Padding(
+        padding: EdgeInsets.only(left: 10, right: 10),
+        child: TextField(
+          controller: controller,
+          obscureText: true,
+          decoration: InputDecoration(
+            labelText: label,
+            border: const OutlineInputBorder(),
+            hintStyle: const TextStyle(color: Color(0xFFA7A7A7), fontSize: 16),
+            focusedBorder: const UnderlineInputBorder(
+              borderSide: BorderSide(color: Color(0xff4863E0), width: 1.5),
+            ),
+            floatingLabelStyle: TextStyle(color: Color(0xff4863E0)),
+            enabledBorder: const UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.grey),
+            ),
+          ),
+        ));
   }
 }

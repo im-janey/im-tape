@@ -8,7 +8,6 @@ import 'package:flutter_application_1/screens/course/final.dart';
 
 class Folder extends StatefulWidget {
   const Folder({super.key});
-
   @override
   State<Folder> createState() => _FolderState();
 }
@@ -17,7 +16,6 @@ class _FolderState extends State<Folder> {
   int _selectedIndex = 0;
   List<Map<String, dynamic>> _cards = [];
   List<String> _imagePaths = [];
-
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -51,16 +49,16 @@ class _FolderState extends State<Folder> {
   // assets 폴더에서 이미지 경로를 불러옴
   void _loadImages() {
     _imagePaths = [
-      'assets/random/1.png',
-      'assets/random/2.png',
-      'assets/random/3.png',
-      'assets/random/4.png',
-      'assets/random/5.png',
-      'assets/random/6.png',
-      'assets/random/7.png',
-      'assets/random/8.png',
-      'assets/random/9.png',
-      'assets/random/10.png',
+      'assets/1.png',
+      'assets/2.png',
+      'assets/3.png',
+      'assets/4.png',
+      'assets/5.png',
+      'assets/6.png',
+      'assets/7.png',
+      'assets/8.png',
+      'assets/9.png',
+      'assets/10.png',
       // 더 많은 이미지를 여기에 추가하세요
     ];
   }
@@ -72,7 +70,6 @@ class _FolderState extends State<Folder> {
       setState(() {
         _cards.add({'courseName': courseName});
       });
-
       await FirebaseFirestore.instance
           .collection('users')
           .doc(user.uid)
@@ -82,8 +79,7 @@ class _FolderState extends State<Folder> {
 
   // 코스 이름 입력 다이얼로그 표시
   void _showCourseNameDialog() {
-    final TextEditingController _controller = TextEditingController();
-
+    final TextEditingController controller = TextEditingController();
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -91,71 +87,74 @@ class _FolderState extends State<Folder> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
           ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Icon(Icons.info_outline, size: 40, color: Colors.black),
-              SizedBox(height: 16),
-              Text(
-                '코스 이름 입력',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 16),
-              TextField(
-                controller: _controller,
-                decoration: InputDecoration(
-                  prefixIcon: Icon(Icons.flag),
-                  hintText: '코스 이름을 입력하세요',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(20),
-                    borderSide: BorderSide(
-                      color: Colors.blue,
-                      width: 2,
+          content: SizedBox(
+            width: MediaQuery.of(context).size.width * 0.8,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Icon(Icons.info_outline, size: 40, color: Colors.black),
+                SizedBox(height: 16),
+                Text(
+                  '코스 이름 입력',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                SizedBox(height: 16),
+                TextField(
+                  controller: controller,
+                  decoration: InputDecoration(
+                    prefixIcon: Icon(Icons.flag),
+                    hintText: '코스 이름을 입력하세요',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20),
+                      borderSide: BorderSide(
+                        color: Colors.blue,
+                        width: 2,
+                      ),
                     ),
                   ),
                 ),
-              ),
-              SizedBox(height: 24),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: <Widget>[
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    style: TextButton.styleFrom(
-                      side: BorderSide(color: Colors.black, width: 1),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
+                SizedBox(height: 24),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: <Widget>[
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      style: TextButton.styleFrom(
+                        side: BorderSide(color: Colors.black, width: 1),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                      ),
+                      child: Text(
+                        '취소',
+                        style: TextStyle(color: Colors.black),
                       ),
                     ),
-                    child: Text(
-                      '취소',
-                      style: TextStyle(color: Colors.black),
-                    ),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      String courseName = _controller.text;
-                      _saveCard(courseName);
-                      Navigator.of(context).pop();
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => FavoritesList()),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
+                    ElevatedButton(
+                      onPressed: () {
+                        String courseName = controller.text;
+                        _saveCard(courseName);
+                        Navigator.of(context).pop();
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => FavoritesList()),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
                       ),
+                      child: Text('설정'),
                     ),
-                    child: Text('설정'),
-                  ),
-                ],
-              ),
-            ],
+                  ],
+                ),
+              ],
+            ),
           ),
         );
       },
@@ -180,7 +179,6 @@ class _FolderState extends State<Folder> {
     // 랜덤 이미지를 선택
     final random = Random();
     final imagePath = _imagePaths[random.nextInt(_imagePaths.length)];
-
     return Card(
       child: Stack(
         children: [

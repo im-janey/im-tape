@@ -5,7 +5,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 class FavoritesList extends StatefulWidget {
   FavoritesList({super.key});
-
   @override
   _FavoritesListState createState() => _FavoritesListState();
 }
@@ -14,9 +13,8 @@ class _FavoritesListState extends State<FavoritesList> {
   GoogleMapController? _mapController;
   final Set<Marker> _markers = {};
   int _selectedCount = 0;
-  final List<Map<String, dynamic>> _selectedPlaces = []; // 선택한 장소들 저장
-  final Set<String> _selectedPlaceIds = {}; // 선택된 장소의 ID를 저장
-
+  final List<Map<String, dynamic>> _selectedPlaces = [];
+  final Set<String> _selectedPlaceIds = {};
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,7 +35,6 @@ class _FavoritesListState extends State<FavoritesList> {
       ),
       body: Stack(
         children: [
-          // Google Map 배경
           GoogleMap(
             onMapCreated: (GoogleMapController controller) {
               _mapController = controller;
@@ -64,16 +61,13 @@ class _FavoritesListState extends State<FavoritesList> {
                     if (snapshot.hasError) {
                       return Center(child: Text('오류가 발생했습니다.'));
                     }
-
                     if (!snapshot.hasData || !snapshot.data!.exists) {
                       return Center(child: Text('코스만들기'));
                     }
-
                     Map<String, dynamic> userData =
                         snapshot.data!.data() as Map<String, dynamic>;
                     List<String> favoriteIds =
                         List<String>.from(userData['favorites'] ?? []);
-
                     return FutureBuilder<List<DocumentSnapshot>>(
                       future: _fetchFavoriteDocuments(favoriteIds),
                       builder: (context, docSnapshot) {
@@ -84,14 +78,11 @@ class _FavoritesListState extends State<FavoritesList> {
                         if (docSnapshot.hasError) {
                           return Center(child: Text('오류가 발생했습니다.'));
                         }
-
                         List<DocumentSnapshot> favoriteDocs =
                             docSnapshot.data ?? [];
-
                         if (favoriteDocs.isEmpty) {
                           return Center(child: Text('코스만들기가 없습니다.'));
                         }
-
                         return Column(
                           children: [
                             Padding(
@@ -99,9 +90,17 @@ class _FavoritesListState extends State<FavoritesList> {
                                   horizontal: 16.0, vertical: 12.0),
                               child: Row(
                                 children: [
-                                  SizedBox(
-                                    width: 160,
+                                  ElevatedButton(
+                                    onPressed: _undoSelection,
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.white,
+                                    ),
+                                    child: Text(
+                                      '이전',
+                                      style: TextStyle(color: Colors.grey[700]),
+                                    ),
                                   ),
+                                  SizedBox(width: 90),
                                   Text(
                                     '찜',
                                     style: TextStyle(
@@ -109,17 +108,14 @@ class _FavoritesListState extends State<FavoritesList> {
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
-                                  SizedBox(
-                                    width: 110,
-                                  ),
+                                  Spacer(),
                                   ElevatedButton(
                                     onPressed: () {
-                                      _saveSelectedPlaces(); // 완료 버튼을 눌렀을 때 선택한 장소 저장
+                                      _saveSelectedPlaces();
                                       Navigator.of(context).pop();
                                     },
                                     style: ElevatedButton.styleFrom(
-                                      backgroundColor:
-                                          Colors.white, // 버튼 배경색 설정
+                                      backgroundColor: Colors.white,
                                     ),
                                     child: Text(
                                       '완료',
@@ -140,13 +136,10 @@ class _FavoritesListState extends State<FavoritesList> {
                                 itemBuilder: (context, index) {
                                   var data = favoriteDocs[index].data()
                                       as Map<String, dynamic>;
-
                                   List<String> images = data['banner'] is List
                                       ? List<String>.from(data['banner'])
                                       : [];
-
                                   String placeId = favoriteDocs[index].id;
-
                                   return ListTile(
                                     leading: images.isNotEmpty
                                         ? Image.network(
@@ -167,15 +160,20 @@ class _FavoritesListState extends State<FavoritesList> {
                                                   _selectPlace(data, placeId);
                                                 },
                                       style: ElevatedButton.styleFrom(
-                                        backgroundColor: _selectedPlaceIds
-                                                .contains(placeId)
-                                            ? Colors.grey[300]
-                                            : Colors.white, // 이미 선택된 경우 비활성화
+                                        backgroundColor:
+                                            _selectedPlaceIds.contains(placeId)
+                                                ? Colors.grey[300]
+                                                : Colors.white,
                                       ),
                                       child: Text(
-                                        '선택',
+                                        _selectedPlaceIds.contains(placeId)
+                                            ? '선택됨'
+                                            : '선택',
                                         style: TextStyle(
-                                          color: Colors.grey[700],
+                                          color: _selectedPlaceIds
+                                                  .contains(placeId)
+                                              ? Colors.grey[700]
+                                              : Colors.black,
                                         ),
                                       ),
                                     ),
@@ -199,26 +197,21 @@ class _FavoritesListState extends State<FavoritesList> {
 
   void _selectPlace(Map<String, dynamic> data, String placeId) {
     if (_selectedCount >= 4) {
-      // 이미 4개의 장소가 선택된 경우, 추가하지 않음
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('최대 4개의 장소만 선택할 수 있습니다.')),
       );
       return;
     }
-
     setState(() {
-      _selectedPlaces.add(data); // 선택한 장소를 리스트에 추가
-      _selectedPlaceIds.add(placeId); // 선택된 장소의 ID를 저장
+      _selectedPlaces.add(data);
+      _selectedPlaceIds.add(placeId);
       _selectedCount++;
-
-      // 장소를 선택할 때마다 마커를 지도에 추가
       if (data['location'] != null && data['location'] is GeoPoint) {
         GeoPoint geoPoint = data['location'];
         LatLng position = LatLng(geoPoint.latitude, geoPoint.longitude);
-
         _markers.add(
           Marker(
-            markerId: MarkerId(data['name'] ?? ''),
+            markerId: MarkerId(placeId),
             position: position,
             infoWindow: InfoWindow(
               title: data['name'] ?? 'No Name',
@@ -226,10 +219,25 @@ class _FavoritesListState extends State<FavoritesList> {
             ),
           ),
         );
-
         _mapController?.animateCamera(CameraUpdate.newLatLng(position));
       }
     });
+  }
+
+  void _undoSelection() {
+    if (_selectedPlaces.isNotEmpty) {
+      setState(() {
+        var lastPlace = _selectedPlaces.removeLast();
+        String lastPlaceId = lastPlace['id'] ?? '';
+        _selectedPlaceIds.remove(lastPlaceId);
+        _selectedCount--;
+        _markers.removeWhere((marker) => marker.markerId.value == lastPlaceId);
+      });
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('선택된 장소가 없습니다.')),
+      );
+    }
   }
 
   void _saveSelectedPlaces() async {
@@ -239,15 +247,11 @@ class _FavoritesListState extends State<FavoritesList> {
       );
       return;
     }
-
     User? user = FirebaseAuth.instance.currentUser;
     if (user == null) return;
-
-    // 선택한 장소들을 Firestore에 저장
     await FirebaseFirestore.instance.collection('users').doc(user.uid).update({
       'selected_places': _selectedPlaces,
     });
-
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text('선택한 장소들이 저장되었습니다.')),
     );
@@ -278,15 +282,13 @@ class _FavoritesListState extends State<FavoritesList> {
           height: 20,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: isFilled ? Color(0xff4863E0) : Colors.white, // 내부 배경 색상
+            color: isFilled ? Color(0xff4863E0) : Colors.white,
             border: Border.all(
-              color: Color(0xff4863E0), // 외곽선 색상
-              width: 2, // 외곽선 두께
+              color: Color(0xff4863E0),
+              width: 2,
             ),
           ),
-          child: isFilled
-              ? Container() // 선택된 상태의 경우 내부를 채우지 않음
-              : null, // 선택되지 않은 상태에서는 내부가 비어 있음
+          child: isFilled ? Container() : null,
         ),
       ],
     );
@@ -315,22 +317,18 @@ class _FavoritesListState extends State<FavoritesList> {
       'display',
       'play'
     ];
-
     for (String collection in collections) {
       QuerySnapshot snapshot = await FirebaseFirestore.instance
           .collection(collection)
           .where(FieldPath.documentId, whereIn: favoriteIds)
           .get();
-
       allDocs.addAll(snapshot.docs);
     }
-
     return allDocs;
   }
 
   LatLngBounds _calculateBounds(Set<Marker> markers) {
     final List<LatLng> positions = markers.map((m) => m.position).toList();
-
     double minLat =
         positions.map((p) => p.latitude).reduce((a, b) => a < b ? a : b);
     double maxLat =
@@ -339,7 +337,6 @@ class _FavoritesListState extends State<FavoritesList> {
         positions.map((p) => p.longitude).reduce((a, b) => a < b ? a : b);
     double maxLng =
         positions.map((p) => p.longitude).reduce((a, b) => a > b ? a : b);
-
     return LatLngBounds(
       southwest: LatLng(minLat, minLng),
       northeast: LatLng(maxLat, maxLng),

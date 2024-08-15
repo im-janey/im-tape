@@ -203,85 +203,81 @@ class _MapPageState extends State<MapPage> {
             minChildSize: 0.1,
             maxChildSize: 0.95,
             builder: (BuildContext context, ScrollController scrollController) {
-              return Container(
-                color: Colors.white,
-                child: ListView.builder(
-                  controller: scrollController,
-                  itemCount: widget.cafe.length,
-                  itemBuilder: (context, index) {
-                    Map<String, dynamic> data =
-                        widget.cafe[index].data() as Map<String, dynamic>;
-                    List<String> banner = data['banner'] is List
-                        ? List<String>.from(data['banner'])
-                        : [];
-                    return ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        padding: EdgeInsets.all(16), // 원하는 패딩 설정
-                        elevation: 2, // 그림자 효과
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8), // 모서리 둥글게
+              return ListView.builder(
+                controller: scrollController,
+                itemCount: widget.cafe.length,
+                itemBuilder: (context, index) {
+                  Map<String, dynamic> data =
+                      widget.cafe[index].data() as Map<String, dynamic>;
+                  List<String> banner = data['banner'] is List
+                      ? List<String>.from(data['banner'])
+                      : [];
+                  return ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      padding: EdgeInsets.all(16), // 원하는 패딩 설정
+                      elevation: 2, // 그림자 효과
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8), // 모서리 둥글게
+                      ),
+                    ),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => DetailPage(
+                              name: data['name'] ?? 'No Name',
+                              data: data,
+                              address: data['address'] ?? 'No Address',
+                              subname: data['subname'],
+                              id: data['id'],
+                              collectionName: 'cafe'),
                         ),
-                      ),
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => DetailPage(
-                                name: data['name'] ?? 'No Name',
-                                data: data,
-                                address: data['address'] ?? 'No Address',
-                                subname: data['subname'],
-                                id: data['id'],
-                                collectionName: 'cafe'),
+                      );
+                    },
+                    child: Row(
+                      children: [
+                        if (banner.isNotEmpty)
+                          Image.network(
+                            banner[0],
+                            height: 100,
+                            fit: BoxFit.contain,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Icon(Icons.error); // 이미지 로드 실패 시 에러 아이콘 표시
+                            },
+                          )
+                        else
+                          Container(
+                            height: 100,
+                            width: 100,
+                            color: Colors.grey, // 이미지가 없을 때 회색 박스 표시
+                            child: Icon(Icons.image_not_supported),
                           ),
-                        );
-                      },
-                      child: Row(
-                        children: [
-                          if (banner.isNotEmpty)
-                            Image.network(
-                              banner[0],
-                              height: 100,
-                              fit: BoxFit.contain,
-                              errorBuilder: (context, error, stackTrace) {
-                                return Icon(
-                                    Icons.error); // 이미지 로드 실패 시 에러 아이콘 표시
-                              },
-                            )
-                          else
-                            Container(
-                              height: 100,
-                              width: 100,
-                              color: Colors.grey, // 이미지가 없을 때 회색 박스 표시
-                              child: Icon(Icons.image_not_supported),
-                            ),
-                          SizedBox(
-                            width: 15,
+                        SizedBox(
+                          width: 15,
+                        ),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                data['name'] ?? 'No Name',
+                                style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black),
+                              ),
+                              Text(
+                                data['subname'] ?? 'No subname',
+                                style: TextStyle(
+                                    fontSize: 15, color: Colors.black),
+                              ),
+                            ],
                           ),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  data['name'] ?? 'No Name',
-                                  style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black),
-                                ),
-                                Text(
-                                  data['subname'] ?? 'No subname',
-                                  style: TextStyle(
-                                      fontSize: 15, color: Colors.black),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
               );
             },
           ),

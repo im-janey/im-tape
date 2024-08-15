@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class MenubarComponent extends StatelessWidget {
+class menubar extends StatelessWidget {
   final String collectionName; // 컬렉션 이름
   final String id; // 문서 ID
 
-  const MenubarComponent(
-      {super.key, required this.collectionName, required this.id});
+  const menubar({super.key, required this.collectionName, required this.id});
 
   @override
   Widget build(BuildContext context) {

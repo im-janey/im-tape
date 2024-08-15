@@ -76,14 +76,21 @@ class _MenuState extends State<Menu> {
                           radius: 30,
                           child: Icon(Icons.person),
                         ),
-                  title: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(_nickname,
-                          style: TextStyle(fontWeight: FontWeight.bold)),
-                      Text(_email),
-                    ],
-                  ),
+                  title: Padding(
+                      padding: EdgeInsets.only(left: 3),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            _nickname,
+                            style: TextStyle(fontSize: 17),
+                          ),
+                          Text(
+                            _email,
+                            style: TextStyle(fontSize: 17),
+                          ),
+                        ],
+                      )),
                 ),
                 SizedBox(height: 15),
                 Divider(
@@ -111,7 +118,7 @@ class _MenuState extends State<Menu> {
                     height: 30,
                   ),
                   title: Text('찜한 장소'),
-                  trailing: Icon(Icons.arrow_forward),
+                  trailing: Icon(Icons.arrow_forward_ios_rounded, size: 18),
                   onTap: () {
                     Navigator.push(
                       context,
@@ -146,7 +153,8 @@ class _MenuState extends State<Menu> {
                   padding: EdgeInsets.only(left: 12),
                   child: ListTile(
                     title: Text('버전'),
-                    trailing: Text('5.7.1', style: TextStyle(fontSize: 16)),
+                    trailing:
+                        Text('0.0.1     ', style: TextStyle(fontSize: 16)),
                   ),
                 ),
                 ListTile(

@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/screens/infobar.dart';
 import 'package:flutter_application_1/screens/menubar.dart';
+import 'package:flutter_application_1/screens/reviewbar.dart';
 
 class DetailPage extends StatefulWidget {
   final String name;
@@ -252,7 +253,7 @@ class _DetailPageState extends State<DetailPage>
                     collectionName: widget.collectionName,
                     id: widget.id,
                   ),
-                  MenubarComponent(
+                  menubar(
                     collectionName: widget.collectionName,
                     id: widget.id,
                   )
